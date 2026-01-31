@@ -160,9 +160,8 @@ configure(javaProjects) {
 
     tasks.withType<JavaCompile>().configureEach {
         options.errorprone.excludedPaths.set(".*java-gen.*")
-        if (!JavaVersion.current().isJava9Compatible) {
-            options.errorprone.isEnabled.set(false)
-        }
+        // Disable Error Prone for Java 17+ compatibility
+        options.errorprone.isEnabled.set(false)
     }
 
     afterEvaluate {

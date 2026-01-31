@@ -77,9 +77,7 @@ public class ClientGui extends JFrame implements ActionListener, TreeSelectionLi
 
     Properties lastConnection = new Properties();
 
-    InputStream in = null;
-    try {
-      in = new FileInputStream(LASTCONNECTION_FILE);
+    try (InputStream in = new FileInputStream(LASTCONNECTION_FILE)) {
       lastConnection.load(in);
 
       ipTextField.setText(lastConnection.getProperty(ADDRESS_KEY));
@@ -100,14 +98,6 @@ public class ClientGui extends JFrame implements ActionListener, TreeSelectionLi
       settingsFrame.setTselRemote(tsel);
     } catch (Exception ex) {
       // no lastconnection.properties file found, use default.
-    } finally {
-      try {
-        if (in != null) {
-          in.close();
-        }
-      } catch (IOException ignored) {
-        // there is nothing that can be done if closing fails
-      }
     }
 
     try {
@@ -331,7 +321,6 @@ public class ClientGui extends JFrame implements ActionListener, TreeSelectionLi
     tree.setModel(new DefaultTreeModel(parser.getModelTree()));
 
     Properties lastConnectSettings = new Properties();
-    FileOutputStream out = null;
     try {
       lastConnectSettings.setProperty(ADDRESS_KEY, ipTextField.getText());
       lastConnectSettings.setProperty(PORT_KEY, portTextField.getText());
@@ -340,18 +329,11 @@ public class ClientGui extends JFrame implements ActionListener, TreeSelectionLi
       tsel = settingsFrame.getTselRemote();
       lastConnectSettings.setProperty(TSEL_REMOTE_KEY, tsel[0] + "," + tsel[1]);
 
-      out = new FileOutputStream(LASTCONNECTION_FILE);
-      lastConnectSettings.store(out, null);
+      try (FileOutputStream out = new FileOutputStream(LASTCONNECTION_FILE)) {
+        lastConnectSettings.store(out, null);
+      }
     } catch (IOException ex) {
       System.out.println("Writing properties file failed. Reason: " + ex.getMessage());
-    } finally {
-      try {
-        if (out != null) {
-          out.close();
-        }
-      } catch (IOException e) {
-        // nothing meaningful can be done if closing fails
-      }
     }
 
     validate();

@@ -24,4 +24,8 @@ public final class SclParseException extends Exception {
   public SclParseException(Exception e) {
     super(e);
   }
+
+  public SclParseException(String string, Exception e) {
+    super(string, e);
+  }
 }
